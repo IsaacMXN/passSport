@@ -31,7 +31,9 @@ RUN apt-get update && apt-get install -y \
   xdg-utils \
   wget \
   libatk-bridge2.0-0 \
-  libgtk-3-0
+  libgtk-3-0 \
+  libgbm1 \
+  libxshmfence1
 
 # Create a non-root user for Puppeteer
 RUN useradd --create-home puppeteeruser
