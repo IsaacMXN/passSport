@@ -1,5 +1,6 @@
 FROM node:16
 
+# Install Puppeteer dependencies
 RUN apt-get update && apt-get install -y \
   gconf-service \
   libasound2 \
@@ -28,17 +29,25 @@ RUN apt-get update && apt-get install -y \
   libappindicator1 \
   lsb-release \
   xdg-utils \
-  wget
+  wget \
+  libatk-bridge2.0-0 \
+  libgtk-3-0
 
+# Create a non-root user for Puppeteer
 RUN useradd --create-home puppeteeruser
 USER puppeteeruser
 
+# Set working directory
 WORKDIR /home/puppeteeruser/app
 
+# Copy project files
 COPY package.json ./
 RUN npm install
 
 COPY . .
 
+# Expose the application port
 EXPOSE 8080
+
+# Start the application
 CMD ["node", "index.js"]
