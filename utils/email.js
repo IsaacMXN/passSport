@@ -1,3 +1,4 @@
+const nodemailer = require('nodemailer');
 const puppeteer = require('puppeteer');
 
 async function generatePDF({ prenom, nom, dob }) {
@@ -52,4 +53,29 @@ async function generatePDF({ prenom, nom, dob }) {
   return pdfBuffer;
 }
 
-module.exports = { generatePDF };
+async function sendEmail(to, pdfBuffer) {
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS
+    }
+  });
+
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to,
+    subject: 'Votre Pass Sport',
+    text: 'Veuillez trouver ci-joint votre Pass Sport.',
+    attachments: [
+      {
+        filename: 'PassSport.pdf',
+        content: pdfBuffer
+      }
+    ]
+  };
+
+  await transporter.sendMail(mailOptions);
+}
+
+module.exports = { generatePDF, sendEmail };
